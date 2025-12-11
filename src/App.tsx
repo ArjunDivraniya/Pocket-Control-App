@@ -1,12 +1,18 @@
 import React from 'react';
-import { AuthProvider } from './src/context/AuthContext';
-import AppNavigator from './src/navigation/AppNavigator';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { AuthProvider } from './context/AuthContext';
+import AppNavigator from './navigation/AppNavigator';
 
 const App = () => {
   return (
-    <AuthProvider>
-      <AppNavigator />
-    </AuthProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AuthProvider>
+        <SafeAreaProvider>
+          <AppNavigator />
+        </SafeAreaProvider>
+      </AuthProvider>
+    </GestureHandlerRootView>
   );
 };
 
