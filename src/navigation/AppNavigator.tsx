@@ -7,13 +7,17 @@ import { AuthContext } from '../context/AuthContext';
 import { COLORS } from '../theme';
 
 // Screens
+import OnboardingScreen from '../screens/Onboarding/OnboardingScreen';
 import LoginScreen from '../screens/Auth/LoginScreen';
 import SignupScreen from '../screens/Auth/SignupScreen';
+import LoadingScreen from '../screens/LoadingScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import TransactionsListScreen from '../screens/TransactionsListScreen';
 import AddExpenseScreen from '../screens/AddExpenseScreen';
 import ReportsScreen from '../screens/ReportsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import CategoryManagerScreen from '../screens/CategoryManagerScreen';
+import ExpenseDetailsScreen from '../screens/ExpenseDetailsScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -75,20 +79,39 @@ const TabNavigator = () => (
     <Tab.Screen name="Add" component={AddExpenseScreen} options={{ tabBarStyle: { display: 'none' } }} />
     <Tab.Screen name="Reports" component={ReportsScreen} />
     <Tab.Screen name="Profile" component={ProfileScreen} />
+    
   </Tab.Navigator>
 );
 
 const AppNavigator = () => {
-  const { userToken } = useContext(AuthContext);
+  const { userToken, isLoading, onboardingComplete } = useContext(AuthContext);
+
+  if (isLoading) {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Loading" component={LoadingScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {userToken ? (
           <Stack.Screen name="Main" component={TabNavigator} />
+        ) : !onboardingComplete ? (
+          <>
+            <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Signup" component={SignupScreen} />
+          </>
         ) : (
           <>
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Signup" component={SignupScreen} />
+            <Stack.Screen name="Onboarding" component={OnboardingScreen} />
           </>
         )}
       </Stack.Navigator>
